@@ -28,8 +28,8 @@ while not validChoice:
 
     if choice == "O" or choice == "o":
 
-        for decoded_password in decoded_password_holder:
-            print(decoded_password + "\t")
+        for index,decoded_password in enumerate(decoded_password_holder):
+            print("MDP {} : ".format(index), decoded_password)
 
         validChoice = True
 

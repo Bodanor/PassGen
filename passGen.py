@@ -88,8 +88,8 @@ while not validchoice:
         validchoice = True
 
     elif save == "N" or save == "n":
-        for password in password_holder:
-            print(password + "\t")
+        for index, password in enumerate(password_holder):
+            print("MDP {} : ".format(index), password)
             validchoice = True
 
     else:
