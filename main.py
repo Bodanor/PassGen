@@ -68,10 +68,20 @@ while not validchoice:
     save = input("Voulez vous sauvegarder les mots de passe dans un fichier ?(O/N)")
     if save == "O" or save == "o":
 
+        encoded_password_holder = []
+        password_encoded = ""
+        caractere_holder = 0
 
+        for password in password_holder:
+            for caracter in password:
+                caractere_holder = ord(caracter) + 47
+                password_encoded += chr(caractere_holder)
+
+            encoded_password_holder.append(password_encoded)
+            password_encoded = ""
 
         with open('Passwords', 'wb') as file:
-            pickle.dump(password_holder, file)
+            pickle.dump(encoded_password_holder, file)
 
         validchoice = True
 
