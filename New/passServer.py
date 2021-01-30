@@ -6,7 +6,7 @@ import time
 
 start_timer = time.time()
 
-IP = "192.168.0.7"
+IP = "127.0.0.1"
 PORT = 7654
 
 ALPHANUM = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "1234567890", "+=%£$*&@#§-_"]
@@ -27,8 +27,8 @@ def client_handler(connexion, addr):
 def clientCommandWorker(command):
 
     if command[0] == "gen" or command[0] == "Gen":
-        password_length = command[1]
-        password_counter = command[2]
+        password_length = command[2]
+        password_counter = command[1]
 
         password_holder = []
         password = ""
