@@ -6,7 +6,8 @@ import threading
 import errno
 import os
 import fcntl
-import sys
+
+
 
 IP = ["94.106.244.227", "127.0.0.1"]
 PORT = 7654
@@ -49,73 +50,94 @@ def commandInput():
 
 def commandWorker():
     while True:
+        global server, random_IP
         command = commandInput()
         args = command.split(' ')
+        erreur_syntax = False
+
         if args[0] == "gen" or args[0] == "Gen":
             if len(args) == 1:
-                length = random.randint(0, 10)
-                password_counter = random.randint(0,20)
-
+                length = random.randint(1, 10)
+                password_counter = random.randint(1,20)
+                erreur_syntax = False
                 passData = [args[0], password_counter, length]
                 passData = pickle.dumps(passData)
                 server.send(passData)
 
+
+
             else:
-                length = int(args[1])
-                password_counter = int(args[2])
+                try:
+                    password_counter = int(args[1])
+                    length = int(args[2])
 
-                passData = [args[0],password_counter, length]
-                passData = pickle.dumps(passData)
-                server.send(passData)
+                    if password_counter >= 30:
+                        print(bcolors.FAIL + "Nombre de mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
 
-            result = server.recv(99999999)
-            password_holder = pickle.loads(result)
+                    elif length >= 30:
+                        print(bcolors.FAIL + "Longueur du mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
 
-
-            validchoice = False
-
-            while not validchoice:
-
-                print("Voulez-vous affichés les mots de passe ? (O/N)")
-                choice = commandInput()
-
-                if choice == "O" or choice == "o":
-
-                    validchoice = True
-                    for index, decoded_password in enumerate(password_holder):
-                        print("MDP {} : ".format(index + 1), bcolors.OKBLUE + decoded_password + bcolors.ENDC)
+                    else:
+                        erreur_syntax = False
+                        passData = [args[0], password_counter, length]
+                        passData = pickle.dumps(passData)
+                        server.send(passData)
 
 
-                elif choice == "N" or choice == "n":
-                    validchoice = True
+                except :
+                    print(bcolors.WARNING + "Erreur dans la syntax. Utilisation :")
+                    print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>" + bcolors.ENDC)
+                    erreur_syntax = True
+                    pass
+
+            if not erreur_syntax :
+                result = server.recv(99999999)
+                password_holder = pickle.loads(result)
+
+                validchoice = False
+
+                while not validchoice:
+
+                    print("Voulez-vous affichés les mots de passe ? (O/N)")
+                    choice = commandInput()
+
+                    if choice == "O" or choice == "o":
+
+                        validchoice = True
+                        for index, decoded_password in enumerate(password_holder):
+                            print("MDP {} : ".format(index + 1), bcolors.OKBLUE + decoded_password + bcolors.ENDC)
 
 
-                else:
-                    validchoice = False
-
-
-            validchoice = False
-            while not validchoice:
-
-                print("Voulez vous sauvegarder les mots de passe dans un fichier ?(O/N)")
-                save = commandInput()
-
-                if save == "O" or save == "o":
-
-                    print("Sauvegarde en cours...")
-                    encoded_password_holder = passwordEncoder(password_holder)
-
-                    with open('Passwords', 'wb') as file:
-                        pickle.dump(encoded_password_holder, file)
-
-                    print("Le fichier " + bcolors.WARNING + "\"Passwords\"" + bcolors.ENDC + " contient vos mot de passe")
-                    validchoice = True
-
-                elif save == "N" or save == "n":
+                    elif choice == "N" or choice == "n":
                         validchoice = True
 
-                else:
-                    validchoice = False
+
+                    else:
+                        validchoice = False
+
+                validchoice = False
+                while not validchoice:
+
+                    print("Voulez vous sauvegarder les mots de passe dans un fichier ?(O/N)")
+                    save = commandInput()
+
+                    if save == "O" or save == "o":
+
+                        print("Sauvegarde en cours...")
+                        encoded_password_holder = passwordEncoder(password_holder)
+
+                        with open('Passwords', 'wb') as file:
+                            pickle.dump(encoded_password_holder, file)
+
+                        print(
+                            "Le fichier " + bcolors.WARNING + "\"Passwords\"" + bcolors.ENDC + " contient vos mot de passe")
+                        validchoice = True
+
+                    elif save == "N" or save == "n":
+                        validchoice = True
+
+                    else:
+                        validchoice = False
 
 
 
@@ -179,16 +201,73 @@ def commandWorker():
         if args[0] == "exit" or args[0] == "Exit" or args[0] == "ex" or args[0] == "quit" or args[0] == "QUIT" or args[0] == "Quit":
             os._exit(0)
 
-        if args[0] == "Help" or args[0] == "help" or args[0] == "HELP":
+        if args[0] == "Help" or args[0] == "help" or args[0] == "HELP" or args[0] == "aide" or args[0] == "Aide" or args[0] == "AIDE":
             print(bcolors.WARNING)
             print("Liste de commande disponible : ")
             print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>")
             print("\t Status : Afficher le status de connexion")
-            print("\t Server : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs")
+            print("\t Serveur : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs")
             print("\t Exit : Quitter le programme.")
-            print("\t Help : afficher ce menu.")
+            print("\t Help ou Aide : afficher ce menu.")
             print("Plus de fonctionne viendront quand les idées seront la.")
             print(bcolors.ENDC)
+
+        if args[0] == "changer" or args[0] == "Changer" or args[0] == "CHANGER":
+            validchoice = False
+            while not validchoice:
+                serveur_up = []
+
+                print(bcolors.WARNING + "Vous etes connecté au serveur " + bcolors.OKGREEN + random_IP + bcolors.ENDC)
+
+                for serveur in IP:
+                    try:
+
+                        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        s.connect((serveur, PORT))
+                        s.close()
+                        serveur_up.append(serveur)
+
+                    except:
+                        pass
+
+                for index, serveur in enumerate(serveur_up):
+                    try:
+                        start_ms = time.time()
+                        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        s.connect((serveur, PORT))
+                        s.close()
+
+                        print(bcolors.OKCYAN + "Serveur ({}) [{}] : {} ms".format(index+1, serveur, round(time.time() - start_ms, 3)) + bcolors.ENDC)
+
+                    except:
+                        pass
+
+                try:
+                    serveur_choix = input("Choisissez un serveur dans la liste ci-dessus : ")
+                    serveur_choix = int(serveur_choix)
+                    validchoice = True
+
+                    if IP[serveur_choix -1 ] == random_IP:
+                        print(bcolors.WARNING + "Vous êtes deja connecté à ce serveur !. Serveur non changé !" + bcolors.ENDC)
+                    else:
+
+                        server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        server.connect((IP[serveur_choix-1],PORT))
+
+                        random_IP = IP[serveur_choix - 1]
+                        print(bcolors.WARNING + "Connecté au serveur {}".format(IP[serveur_choix-1])+ bcolors.ENDC)
+
+                except ValueError:
+                    validchoice = False
+                    pass
+
+                except IndexError:
+                    print( bcolors.WARNING + "Serveur non compris dans la liste..." + bcolors.ENDC)
+                    validchoice = False
+
+                except ConnectionError:
+                    print(bcolors.FAIL + "Serveur Down" + bcolors.ENDC)
+                    validchoice = False
 
 
 
@@ -225,15 +304,21 @@ def connexionHolder():
             server_status = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             serveur_up = []
 
-            for serveur in IP:
-                try:
-                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                    s.connect((serveur, PORT))
-                    s.close()
-                    serveur_up.append(serveur)
-                except:
-                    pass
+            while len(serveur_up) == 0:
+                for serveur in IP:
+                    try:
+                        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        s.connect((serveur, PORT))
+                        s.close()
+                        serveur_up.append(serveur)
+                    except:
+                        pass
 
+                if len(serveur_up) == 0:
+                    print(bcolors.FAIL + "Ancun serveur disponible !" + bcolors.ENDC)
+                    time.sleep(1)
+
+            global random_IP
             random_IP = serveur_up[random.randint(0,len(serveur_up)-1)]
             server.connect((random_IP, PORT))
             server_status.connect((random_IP, PORT))
@@ -249,7 +334,6 @@ def connexionHolder():
                 crashed = connexionStatus(server_status)
 
                 if crashed == True:
-                    print("Le serveur a crash !")
                     crashed = True
                     connected = False
 
