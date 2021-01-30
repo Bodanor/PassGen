@@ -38,19 +38,13 @@ def passwordGen(password_length, password_counter):
                     symbols_counter += 1
 
             if (password_length > 4) and (symbols_counter > 2 or numeric_counter > 2):
-                symbols_counter = 0
-                uppercase_counter = 0
-                lowercase_counter = 0
-                numeric_counter = 0
+
                 password_holder.append(password)
                 acceptable = True
                 password = ""
 
             if password_length<= 4:
-                symbols_counter = 0
-                uppercase_counter = 0
-                lowercase_counter = 0
-                numeric_counter = 0
+
                 password_holder.append(password)
                 acceptable = True
                 password = ""
@@ -103,7 +97,7 @@ while not validchoice:
 
     elif save == "N" or save == "n":
         for index, password in enumerate(password_holder):
-            print("MDP {} : ".format(index), password)
+            print("MDP {} : ".format(index +1 ), password)
             validchoice = True
 
     else:
