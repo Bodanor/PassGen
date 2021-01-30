@@ -2,17 +2,20 @@ import socket
 import threading
 import pickle
 import random
+import time
 
-IP = ["Entrez vos adresses sous forme de tableau ici"]
+start_timer = time.time()
+
+IP = "192.168.0.7"
 PORT = 7654
 
 ALPHANUM = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "1234567890", "+=%£$*&@#§-_"]
 
-def client_handler(connexion):
+def client_handler(connexion, addr):
     while True:
         command = connexion.recv(1024)
         if not command:
-            print("Deconnexion !")
+            print("[{}] Deconnexion de {}!".format(round(time.time() - start_timer, 4), addr[0]))
             break
 
         command = pickle.loads(command)
@@ -76,14 +79,16 @@ def clientCommandWorker(command):
 
 
 
+
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server.bind((IP, PORT))
 
+print("[{}] Démarrage du serveur !".format(round(time.time() - start_timer, 4)))
 
 while True:
     server.listen()
     connexion, addresse = server.accept()
-    print("Nouvelle connexion de {} sur le port {}".format(addresse[0], addresse[1]))
-    client_thread = threading.Thread(target=client_handler, args=(connexion,))
+    print("[{}]Nouvelle connexion de {} sur le port {}".format(round(time.time() - start_timer, 4),addresse[0], addresse[1]))
+    client_thread = threading.Thread(target=client_handler, args=(connexion,addresse,))
     client_thread.start()
