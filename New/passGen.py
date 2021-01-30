@@ -11,6 +11,8 @@ import sys
 IP = ["94.106.244.227", "127.0.0.1"]
 PORT = 7654
 
+BUFFERSIZE = 100
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -54,7 +56,7 @@ def commandWorker():
                 length = random.randint(0, 10)
                 password_counter = random.randint(0,20)
 
-                passData = [args[0], length, password_counter]
+                passData = [args[0], password_counter, length]
                 passData = pickle.dumps(passData)
                 server.send(passData)
 
@@ -62,11 +64,11 @@ def commandWorker():
                 length = int(args[1])
                 password_counter = int(args[2])
 
-                passData = [args[0],length, password_counter]
+                passData = [args[0],password_counter, length]
                 passData = pickle.dumps(passData)
                 server.send(passData)
 
-            result = server.recv(8096)
+            result = server.recv(99999999)
             password_holder = pickle.loads(result)
 
 
@@ -174,7 +176,7 @@ def commandWorker():
 
 
 
-        if args[0] == "exit" or args[0] == "Exit" or args[0] == "ex":
+        if args[0] == "exit" or args[0] == "Exit" or args[0] == "ex" or args[0] == "quit" or args[0] == "QUIT" or args[0] == "Quit":
             os._exit(0)
 
         if args[0] == "Help" or args[0] == "help" or args[0] == "HELP":
@@ -193,7 +195,8 @@ def commandWorker():
 
 def connexionStatus(server_status):
     try:
-        connexion = server_status.recv(4)
+
+        server_status.recv(4)
     except socket.error as e:
         err = e.args[0]
         if err == errno.EAGAIN or err == errno.EWOULDBLOCK:
@@ -221,15 +224,15 @@ def connexionHolder():
             server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             server_status = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             serveur_up = []
-            try:
-                for serveur in IP:
+
+            for serveur in IP:
+                try:
                     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                     s.connect((serveur, PORT))
                     s.close()
                     serveur_up.append(serveur)
-
-            except:
-                pass
+                except:
+                    pass
 
             random_IP = serveur_up[random.randint(0,len(serveur_up)-1)]
             server.connect((random_IP, PORT))
