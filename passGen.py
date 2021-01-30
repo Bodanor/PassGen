@@ -1,65 +1,89 @@
 import random
 import pickle
 
-alphanum = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "1234567890", "+=%£$*&@#§-_"]
-
-password_holder = []
-password = ""
-password_couter = input("Nombres de mot de passe : ")
-password_couter = int(password_couter)
-lenght = input("Longueur du mot de passe : ")
-lenght = int(lenght)
+ALPHANUM = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "1234567890", "+=%£$*&@#§-_"]
 
 
-for y in range(0,password_couter):
-    acceptable = False
+def passwordGen(password_length, password_counter):
 
-    while not acceptable:
-        symbols_counter = 0
-        uppercase_counter = 0
-        lowercase_counter = 0
-        numeric_counter = 0
+    password_holder = []
+    password = ""
 
-        for x in range(0,lenght):
+    for y in range(0, password_counter):
+        acceptable = False
 
-            random_cat = random.randint(0,len(alphanum)-1)
-            random_caractere = random.randint(0,len(alphanum[random_cat])-1)
-
-            password += alphanum[random_cat][random_caractere]
-
-            if random_cat == 0:
-                uppercase_counter += 1
-
-            elif random_cat == 1:
-                lowercase_counter += 1
-
-            elif random_cat == 2:
-                numeric_counter += 1
-
-            elif random_cat == 3:
-                symbols_counter += 1
-
-
-        if (lenght > 4) and (symbols_counter > 2 or numeric_counter > 2):
+        while not acceptable:
             symbols_counter = 0
             uppercase_counter = 0
             lowercase_counter = 0
             numeric_counter = 0
-            password_holder.append(password)
-            acceptable = True
-            password = ""
 
-        if lenght <= 4:
-            symbols_counter = 0
-            uppercase_counter = 0
-            lowercase_counter = 0
-            numeric_counter = 0
-            password_holder.append(password)
-            acceptable = True
-            password = ""
+            for x in range(0, password_length):
 
-        else:
-            password = ""
+                random_cat = random.randint(0, len(ALPHANUM) - 1)
+                random_caractere = random.randint(0, len(ALPHANUM[random_cat]) - 1)
+
+                password += ALPHANUM[random_cat][random_caractere]
+
+                if random_cat == 0:
+                    uppercase_counter += 1
+
+                elif random_cat == 1:
+                    lowercase_counter += 1
+
+                elif random_cat == 2:
+                    numeric_counter += 1
+
+                elif random_cat == 3:
+                    symbols_counter += 1
+
+            if (password_length > 4) and (symbols_counter > 2 or numeric_counter > 2):
+                symbols_counter = 0
+                uppercase_counter = 0
+                lowercase_counter = 0
+                numeric_counter = 0
+                password_holder.append(password)
+                acceptable = True
+                password = ""
+
+            if password_length<= 4:
+                symbols_counter = 0
+                uppercase_counter = 0
+                lowercase_counter = 0
+                numeric_counter = 0
+                password_holder.append(password)
+                acceptable = True
+                password = ""
+
+            else:
+                password = ""
+
+    return password_holder
+
+
+def passwordEncoder(password_holder):
+
+    encoded_password_holder = []
+    password_encoded = ""
+
+    for password in password_holder:
+        for caracter in password:
+            caractere_holder = ord(caracter) + 47
+            password_encoded += chr(caractere_holder)
+
+        encoded_password_holder.append(password_encoded)
+        password_encoded = ""
+
+    return encoded_password_holder
+
+
+password_counter = input("Nombres de mot de passe à générer : ")
+password_counter = int(password_counter)
+password_length = input("Longueur de chaque mot de passe : ")
+password_length = int(password_length)
+
+password_holder = passwordGen(password_length, password_counter)
+
 
 validchoice = False
 
@@ -68,18 +92,8 @@ while not validchoice:
     save = input("Voulez vous sauvegarder les mots de passe dans un fichier ?(O/N)")
     if save == "O" or save == "o":
 
-        encoded_password_holder = []
-        password_encoded = ""
-
-        for password in password_holder:
-            for caracter in password:
-
-                caractere_holder = ord(caracter) + 47
-                password_encoded += chr(caractere_holder)
-
-            encoded_password_holder.append(password_encoded)
-            password_encoded = ""
-
+        print("Sauvegarde en cours...")
+        encoded_password_holder = passwordEncoder(password_holder)
 
         with open('Passwords', 'wb') as file:
             pickle.dump(encoded_password_holder, file)
