@@ -1,0 +1,2 @@
+Quand on demarre Passgen, on obtient une commande prompt. Passgen va se connecte au serveur. Si on tappe la commande gen, alors on envoie une requete au serveur qui va generer des mot de passe pour nous et nous les envoyer sous forme de pickle quon va devoir decode.
+Rajouter d'autre fonction de commande
