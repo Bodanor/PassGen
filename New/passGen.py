@@ -6,8 +6,9 @@ import threading
 import errno
 import os
 import fcntl
+import sys
 
-IP = ["Entrez vos adresses sous forme de tableau ici"]
+IP = ["94.106.244.227"]
 PORT = 7654
 
 def passwordEncoder(password_holder):
@@ -114,6 +115,8 @@ def commandWorker():
             elif crash == False:
                 print("Connected !")
 
+        if args[0] == "exit" or args[0] == "Exit" or args[0] == "ex":
+            os._exit(0)
 
 
 
