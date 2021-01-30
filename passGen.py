@@ -70,19 +70,21 @@ while not validchoice:
 
         encoded_password_holder = []
         password_encoded = ""
-        caractere_holder = 0
 
         for password in password_holder:
             for caracter in password:
+
                 caractere_holder = ord(caracter) + 47
                 password_encoded += chr(caractere_holder)
 
             encoded_password_holder.append(password_encoded)
             password_encoded = ""
 
+
         with open('Passwords', 'wb') as file:
             pickle.dump(encoded_password_holder, file)
 
+        print("Le fichier \"Passwords\" contient vos mot de passe. Pour les lires, veuillez utilisez le programme \"passDec.py\".")
         validchoice = True
 
     elif save == "N" or save == "n":
