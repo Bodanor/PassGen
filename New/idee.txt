@@ -1,0 +1,8 @@
+Drop la connection apres un moment is inactivite + mesasge de deconexion avant un certains temps
+modifier l'affichage des mot de passe
+
+A FAIRE :
+
+Si pas de serveur alors on attend
+
+Ajout d'une fonction de cahngelent de serveur

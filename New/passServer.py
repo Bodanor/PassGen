@@ -12,17 +12,22 @@ PORT = 7654
 ALPHANUM = ["ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz", "1234567890", "+=%£$*&@#§-_"]
 
 def client_handler(connexion, addr):
-    while True:
-        command = connexion.recv(1024)
-        if not command:
-            print("[{}] Deconnexion de {}!".format(round(time.time() - start_timer, 4), addr[0]))
-            break
+    try:
+        while True:
+            command = connexion.recv(1024)
+            if not command:
+                print("[{}] Deconnexion de {}!".format(round(time.time() - start_timer, 4), addr[0]))
+                break
 
-        command = pickle.loads(command)
+            command = pickle.loads(command)
 
-        data = clientCommandWorker(command)
-        data = pickle.dumps(data)
-        connexion.send(data)
+            data = clientCommandWorker(command)
+            data = pickle.dumps(data)
+            connexion.send(data)
+
+    except pickle.UnpicklingError:
+        connexion.close()
+
 
 def clientCommandWorker(command):
 
