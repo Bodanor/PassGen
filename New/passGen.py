@@ -92,11 +92,18 @@ def commandWorker():
                             length = int(args[2])
 
                             if password_counter >= 30:
-                                print(bcolors.FAIL + "Nombre de mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
+                                if is_linux:
+                                    print(bcolors.FAIL + "Nombre de mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
+                                else:
+                                    print("Nombre de mot de passe trop grand !(MAX 50)")
+
                                 erreur_syntax = True
 
                             elif length >= 30:
-                                print(bcolors.FAIL + "Longueur du mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
+                                if is_linux:
+                                    print(bcolors.FAIL + "Longueur du mot de passe trop grand !(MAX 50)" + bcolors.ENDC)
+                                else:
+                                    print("Longueur du mot de passe trop grand !(MAX 50)")
                                 erreur_syntax = True
 
                             else:
@@ -107,8 +114,14 @@ def commandWorker():
 
 
                         except :
-                            print(bcolors.WARNING + "Erreur dans la syntax. Utilisation :")
-                            print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>" + bcolors.ENDC)
+                            if is_linux:
+                                print(bcolors.WARNING + "Erreur dans la syntax. Utilisation :")
+                                print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>")
+
+                            else:
+                                print("Erreur dans la syntax. Utilisation :")
+                                print(
+                                    "\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>")
                             erreur_syntax = True
                             pass
 
@@ -131,7 +144,10 @@ def commandWorker():
 
                                 validchoice = True
                                 for index, decoded_password in enumerate(password_holder):
-                                    print("MDP {} : ".format(index + 1), bcolors.OKBLUE + decoded_password + bcolors.ENDC)
+                                    if is_linux:
+                                        print("MDP {} : ".format(index + 1), bcolors.OKBLUE + decoded_password + bcolors.ENDC)
+                                    else:
+                                        print("MDP {} : ".format(index + 1) + decoded_password)
 
 
                             elif choice == "N" or choice == "n":
@@ -155,8 +171,11 @@ def commandWorker():
                                 with open('Passwords', 'wb') as file:
                                     pickle.dump(encoded_password_holder, file)
 
-                                print(
-                                    "Le fichier " + bcolors.WARNING + "\"Passwords\"" + bcolors.ENDC + " contient vos mot de passe")
+                                if is_linux:
+                                    print("Le fichier " + bcolors.WARNING + "\"Passwords\"" + bcolors.ENDC + " contient vos mot de passe")
+
+                                else:
+                                    print("Le fichier \"Passwords\" contient vos mot de passe")
                                 validchoice = True
 
                             elif save == "N" or save == "n":
@@ -166,7 +185,10 @@ def commandWorker():
                                 validchoice = False
 
                 else:
-                    print(bcolors.FAIL + "Vous n'etes connecté à aucun serveur !" + bcolors.ENDC)
+                    if is_linux:
+                        print(bcolors.FAIL + "Vous n'etes connecté à aucun serveur !" + bcolors.ENDC)
+                    else:
+                        print("Vous n'etes connecté à aucun serveur !")
 
 
 
@@ -177,39 +199,73 @@ def commandWorker():
                         crash = connexionStatus(server_status)
 
                         if crash == True:
-                            print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+                            if is_linux:
+                                print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+                            else:
+                                print("Déconnecté !")
 
                         elif crash == False:
-                            print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC+ bcolors.OKBLUE + random_IP + bcolors.ENDC)
+                            if is_linux:
+                                print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC+ bcolors.OKBLUE + random_IP + bcolors.ENDC)
+                            else:
+                                print("Connecté au serveur : {}".format(random_IP))
 
                     if len(args) == 2:
                         crash = connexionStatus(server_status)
                         if crash == False:
 
                             if args[1].rstrip() == "-a":
-                                print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC + bcolors.OKBLUE + random_IP + bcolors.ENDC)
+                                if is_linux:
+                                    print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC + bcolors.OKBLUE + random_IP + bcolors.ENDC)
+
+                                else:
+                                    print("Connecté au serveur : {}".format(random_IP))
+
                                 server.send(pickle.dumps([args[0]]))
                                 sys_info = server.recv(99999999)
                                 sys_info = pickle.loads(sys_info)
-                                print(bcolors.WARNING + "Platform : {}".format(sys_info[0]) + bcolors.ENDC)
-                                print(bcolors.WARNING + "Platform-Release : {}".format(sys_info[1]) + bcolors.ENDC)
-                                print(bcolors.WARNING + "Platform-Version : {}".format(sys_info[2]) + bcolors.ENDC)
-                                print(bcolors.FAIL + "Architecture : {}".format(sys_info[3]) + bcolors.ENDC)
-                                print(bcolors.OKBLUE + "Hostname : {}".format(sys_info[4]) + bcolors.ENDC)
-                                print(bcolors.OKBLUE + "Ip Address : {}".format(sys_info[5]) + bcolors.ENDC)
-                                print(bcolors.FAIL + "Processor : {}".format(sys_info[6]) + bcolors.ENDC)
-                                print(bcolors.FAIL + "CPU Cores : {}".format(sys_info[7]) + bcolors.ENDC)
-                                print(bcolors.OKGREEN + "Ram : {}".format(sys_info[8]) + bcolors.ENDC)
-                                print(bcolors.OKGREEN + "Ram Usage : {}%".format(sys_info[9]) + bcolors.ENDC)
-                                print(bcolors.FAIL + "CPU Usage : {}%".format(sys_info[10]) + bcolors.ENDC)
-                                start_ms = time.time()
-                                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                                s.connect((random_IP, PORT))
-                                s.close()
-                                print(bcolors.OKBLUE + "Latence : {} ms".format(round(time.time() - start_ms, 2)) + bcolors.ENDC)
+                                if is_linux:
+                                    print(bcolors.WARNING + "Platform : {}".format(sys_info[0]) + bcolors.ENDC)
+                                    print(bcolors.WARNING + "Platform-Release : {}".format(sys_info[1]) + bcolors.ENDC)
+                                    print(bcolors.WARNING + "Platform-Version : {}".format(sys_info[2]) + bcolors.ENDC)
+                                    print(bcolors.FAIL + "Architecture : {}".format(sys_info[3]) + bcolors.ENDC)
+                                    print(bcolors.OKBLUE + "Hostname : {}".format(sys_info[4]) + bcolors.ENDC)
+                                    print(bcolors.OKBLUE + "Ip Address : {}".format(sys_info[5]) + bcolors.ENDC)
+                                    print(bcolors.FAIL + "Processor : {}".format(sys_info[6]) + bcolors.ENDC)
+                                    print(bcolors.FAIL + "CPU Cores : {}".format(sys_info[7]) + bcolors.ENDC)
+                                    print(bcolors.OKGREEN + "Ram : {}".format(sys_info[8]) + bcolors.ENDC)
+                                    print(bcolors.OKGREEN + "Ram Usage : {}%".format(sys_info[9]) + bcolors.ENDC)
+                                    print(bcolors.FAIL + "CPU Usage : {}%".format(sys_info[10]) + bcolors.ENDC)
+                                    start_ms = time.time()
+                                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                    s.connect((random_IP, PORT))
+                                    s.close()
+                                    print(bcolors.OKBLUE + "Latence : {} ms".format(round(time.time() - start_ms, 2)) + bcolors.ENDC)
+
+                                else:
+                                    print("Platform : {}".format(sys_info[0]))
+                                    print("Platform-Release : {}".format(sys_info[1]))
+                                    print("Platform-Version : {}".format(sys_info[2]))
+                                    print("Architecture : {}".format(sys_info[3]))
+                                    print("Hostname : {}".format(sys_info[4]))
+                                    print("Ip Address : {}".format(sys_info[5]))
+                                    print("Processor : {}".format(sys_info[6]))
+                                    print("CPU Cores : {}".format(sys_info[7]))
+                                    print("Ram : {}".format(sys_info[8]))
+                                    print("Ram Usage : {}%".format(sys_info[9]))
+                                    print("CPU Usage : {}%".format(sys_info[10]))
+                                    start_ms = time.time()
+                                    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                    s.connect((random_IP, PORT))
+                                    s.close()
+                                    print("Latence : {} ms".format(round(time.time() - start_ms, 2)))
 
                         elif crash == True:
-                            print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+                            if is_linux:
+                                print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+
+                            else:
+                                print("Déconnecté !")
 
                 except KeyboardInterrupt:
                     pass
@@ -229,7 +285,11 @@ def commandWorker():
                             pass
 
                     for index, serveur in enumerate(serveur_up):
-                        print(bcolors.OKGREEN + "Serveur {} [{}] : est fonctionnel !".format(index+1, serveur) + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.OKGREEN + "Serveur {} [{}] : est fonctionnel !".format(index+1, serveur) + bcolors.ENDC)
+
+                        else:
+                            print("Serveur {} [{}] : est fonctionnel !".format(index + 1,serveur))
 
 
                     #faire une boucle et afficher les serveur disponibles
@@ -251,12 +311,19 @@ def commandWorker():
                             pass
 
                     for index, serveur in enumerate(serveur_up):
-                        print(bcolors.OKGREEN + "Serveur {} [{}] : est fonctionnel !".format(index+1, serveur) + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.OKGREEN + "Serveur {} [{}] : est fonctionnel !".format(index+1, serveur) + bcolors.ENDC)
 
+                        else:
+                            print("Serveur {} [{}] : est fonctionnel !".format(index + 1,serveur))
 
 
                     for index, serveur in enumerate(serveur_down):
-                        print(bcolors.FAIL + "Serveur {} [{}] : est down !".format(index + 1, serveur) + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.FAIL + "Serveur {} [{}] : est down !".format(index + 1, serveur) + bcolors.ENDC)
+
+                        else:
+                            print("Serveur {} [{}] : est down !".format(index + 1, serveur))
 
 
 
@@ -268,17 +335,30 @@ def commandWorker():
                 os._exit(0)
 
             elif args[0] == "Help" or args[0] == "help" or args[0] == "HELP" or args[0] == "aide" or args[0] == "Aide" or args[0] == "AIDE":
-                print(bcolors.WARNING)
-                print("Liste de commande disponible : ")
-                print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>.")
-                print("\t Info ou stat : Afficher le status de connexion. Utilisation : -a Pour plus d'inforamtions sur le serveur.")
-                print("\t Serveur : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs.")
-                print("\t Changer : Changer de serveur.")
-                print("\t Remote : Controler un serveur à distance par ssh.")
-                print("\t Exit : Quitter le programme.")
-                print("\t Help ou Aide : afficher ce menu.")
-                print("Plus de fonctionne viendront quand les idées seront la.")
-                print(bcolors.ENDC)
+                if is_linux:
+                    print(bcolors.WARNING)
+                    print("Liste de commande disponible : ")
+                    print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>.")
+                    print("\t Info ou stat : Afficher le status de connexion. Utilisation : -a Pour plus d'inforamtions sur le serveur.")
+                    print("\t Serveur : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs.")
+                    print("\t Changer : Changer de serveur.")
+                    print("\t Remote : Controler un serveur à distance par ssh.")
+                    print("\t Exit : Quitter le programme.")
+                    print("\t Help ou Aide : afficher ce menu.")
+                    print("Plus de fonctionne viendront quand les idées seront la.")
+                    print(bcolors.ENDC)
+
+                else:
+                    print("Liste de commande disponible : ")
+                    print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>.")
+                    print("\t Info ou stat : Afficher le status de connexion. Utilisation : -a Pour plus d'inforamtions sur le serveur.")
+                    print("\t Serveur : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs.")
+                    print("\t Changer : Changer de serveur.")
+                    print("\t Remote : Controler un serveur à distance par ssh.")
+                    print("\t Exit : Quitter le programme.")
+                    print("\t Help ou Aide : afficher ce menu.")
+                    print("Plus de fonctionne viendront quand les idées seront la.")
+
 
             elif args[0] == "changer" or args[0] == "Changer" or args[0] == "CHANGER":
                 validchoice = False
@@ -288,7 +368,11 @@ def commandWorker():
                     crashed = connexionStatus(server_status)
 
                     if not crashed:
-                        print(bcolors.WARNING + "Vous etes connecté au serveur " + bcolors.OKGREEN + random_IP + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.WARNING + "Vous etes connecté au serveur " + bcolors.OKGREEN + random_IP + bcolors.ENDC)
+
+                        else:
+                            print("Vous etes connecté au serveur {}".format(random_IP))
 
                     for serveur in IP:
                         try:
@@ -307,14 +391,20 @@ def commandWorker():
                             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                             s.connect((serveur, PORT))
                             s.close()
+                            if is_linux:
+                                print(bcolors.OKCYAN + "Serveur ({}) [{}] : {} ms".format(index+1, serveur, round(time.time() - start_ms, 3)) + bcolors.ENDC)
 
-                            print(bcolors.OKCYAN + "Serveur ({}) [{}] : {} ms".format(index+1, serveur, round(time.time() - start_ms, 3)) + bcolors.ENDC)
-
+                            else:
+                                print("Serveur ({}) [{}] : {} ms".format(index + 1, serveur,round(time.time() - start_ms,3)))
                         except:
                             pass
 
                     if len(serveur_up) == 0:
-                        print(bcolors.FAIL + "Aucun serveur disponible !" + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.FAIL + "Aucun serveur disponible !" + bcolors.ENDC)
+
+                        else:
+                            print("Aucun serveur disponible !")
                         validchoice = True
 
                     else:
@@ -327,7 +417,10 @@ def commandWorker():
                                 serveur_choix = int(serveur_choix)
 
                                 if serveur_up[serveur_choix -1] == random_IP:
-                                    print(bcolors.WARNING + "Vous êtes deja connecté à ce serveur !. Serveur non changé !" + bcolors.ENDC)
+                                    if is_linux:
+                                        print(bcolors.WARNING + "Vous êtes deja connecté à ce serveur !. Serveur non changé !" + bcolors.ENDC)
+                                    else:
+                                        print("Vous êtes deja connecté à ce serveur !. Serveur non changé !")
                                     validchoice = True
                                 else:
 
@@ -335,18 +428,30 @@ def commandWorker():
                                     server.connect((IP[serveur_choix-1],PORT))
 
                                     random_IP = IP[serveur_choix - 1]
-                                    print(bcolors.WARNING + "Connecté au serveur {}".format(IP[serveur_choix-1])+ bcolors.ENDC)
+                                    if is_linux:
+                                        print(bcolors.WARNING + "Connecté au serveur {}".format(IP[serveur_choix-1])+ bcolors.ENDC)
+                                    else:
+                                        print("Connecté au serveur {}".format(IP[serveur_choix - 1]))
+
                                     validchoice = True
                         except ValueError:
                             validchoice = False
                             pass
 
                         except IndexError:
-                            print( bcolors.WARNING + "Serveur non compris dans la liste..." + bcolors.ENDC)
+                            if is_linux:
+                                print( bcolors.WARNING + "Serveur non compris dans la liste..." + bcolors.ENDC)
+                            else:
+                                print("Serveur non compris dans la liste...")
+
                             validchoice = False
 
                         except ConnectionError:
-                            print(bcolors.FAIL + "Serveur Down" + bcolors.ENDC)
+                            if is_linux:
+                                print(bcolors.FAIL + "Serveur Down" + bcolors.ENDC)
+                            else:
+                                print("Serveur Down")
+
                             validchoice = False
 
             elif args[0] == "remote" or args[0] == "Remote":
@@ -354,9 +459,17 @@ def commandWorker():
                 attempt = 3
                 while attempt != 0:
                     try:
-                        username = input(bcolors.OKBLUE + "Utilisateur >> {}".format(bcolors.ENDC))
+                        if is_linux:
+                            username = input(bcolors.OKBLUE + "Utilisateur >> {}".format(bcolors.ENDC))
 
-                        pasword = getpass.getpass(bcolors.WARNING + "Mot de passe >> {}".format(bcolors.ENDC))
+                        else:
+                            username = input("Utilisateur >> ")
+
+                        if is_linux:
+                            pasword = getpass.getpass(bcolors.WARNING + "Mot de passe >> {}".format(bcolors.ENDC))
+
+                        else:
+                            pasword = getpass.getpass("Mot de passe >> ")
                         ssh = paramiko.SSHClient()
                         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                         ssh.connect(random_IP, username=username, password=pasword)
@@ -366,7 +479,9 @@ def commandWorker():
                         while not crashed and current_server == random_IP:
 
                             crashed = connexionStatus(server_status)
+
                             command_ssh = input("{} >> ".format(random_IP))
+
                             if command_ssh == "Exit" or command_ssh == "exit":
 
                                 break
@@ -377,7 +492,12 @@ def commandWorker():
                                 print(err)
 
                     except paramiko.AuthenticationException:
-                        print(bcolors.FAIL + "Nom d'utilisateur ou mot de passe incorrect !" + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.FAIL + "Nom d'utilisateur ou mot de passe incorrect !" + bcolors.ENDC)
+
+                        else:
+                            print("Nom d'utilisateur ou mot de passe incorrect !")
+
                         attempt -=1
 
                     except paramiko.ssh_exception.NoValidConnectionsError:
@@ -393,7 +513,12 @@ def commandWorker():
                 erreur_syntax = False
                 if crashed == False:
                     if len(args) == 1:
-                        print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
+                        if is_linux:
+                            print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
+
+                        else:
+                            print("Utilisation : Hash <HashType> <hash>")
+
                         erreur_syntax = True
 
                     elif len(args) == 2:
@@ -408,8 +533,11 @@ def commandWorker():
                         hash = pickle.dumps(hash)
                         server.send(hash)
                     else:
+                        if is_linux:
+                            print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
+                        else:
+                            print("Utilisation : Hash <HashType> <hash>")
 
-                        print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
                         erreur_syntax = True
 
                     if not erreur_syntax:
@@ -424,8 +552,11 @@ def commandWorker():
 
 
                 else:
-                    print(bcolors.FAIL + "Vous n'etes connecté à aucun serveur !" + bcolors.ENDC)
+                    if is_linux:
+                        print(bcolors.FAIL + "Vous n'etes connecté à aucun serveur !" + bcolors.ENDC)
 
+                    else:
+                        print("Vous n'etes connecté à aucun serveur !")
 
 
     except AttributeError:
