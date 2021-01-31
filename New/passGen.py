@@ -150,7 +150,7 @@ def commandWorker():
 
 
 
-        if args[0] == "Status" or args[0] == "status" or args[0] == "stat":
+        if args[0] == "Status" or args[0] == "status" or args[0] == "stat" or args[0] == "s" or args[0] == "S":
             if len(args) == 1:
                 crash = connexionStatus(server_status)
 
@@ -338,7 +338,6 @@ def connexionHolder():
             random_IP = serveur_up[random.randint(0,len(serveur_up)-1)]
             server.connect((random_IP, PORT))
             server_status.connect((random_IP, PORT))
-            print(bcolors.WARNING + "\nConnecté au serveur {}".format(random_IP) + bcolors.ENDC, end= ' ')
             fcntl.fcntl(server_status, fcntl.F_SETFL, os.O_NONBLOCK)
             connected = True
 
@@ -348,7 +347,7 @@ def connexionHolder():
                 crashed = connexionStatus(server_status)
 
                 if crashed == True:
-                    print(bcolors.FAIL + "Déconnecté du serveur {}".format(random_IP) + bcolors.ENDC, end= ' ')
+
                     crashed = True
                     connected = False
 
