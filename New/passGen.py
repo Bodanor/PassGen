@@ -441,9 +441,6 @@ def connexionStatus(server_status):
         return True
 
 
-
-
-
 def connexionHolder():
 
     connected = False
@@ -469,7 +466,7 @@ def connexionHolder():
             random_IP = serveur_up[random.randint(0,len(serveur_up)-1)]
             server.connect((random_IP, PORT))
             server_status.connect((random_IP, PORT))
-            fcntl.fcntl(server_status, fcntl.F_SETFL, os.O_NONBLOCK)
+            server_status.setblocking(False)
             connected = True
 
             crashed = False
