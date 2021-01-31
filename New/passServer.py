@@ -3,6 +3,27 @@ import threading
 import pickle
 import random
 import time
+import multiprocessing
+
+import platform,psutil,logging
+
+def getSystemInfo():
+    try:
+        info=[]
+        info.append(platform.system())
+        info.append(platform.release())
+        info.append(platform.version())
+        info.append(platform.machine())
+        info.append(socket.gethostname())
+        info.append(socket.gethostbyname(socket.gethostname()))
+        info.append(platform.processor())
+        info.append(multiprocessing.cpu_count())
+        info.append(str(round(psutil.virtual_memory().total / (1024.0 **3)))+" GB")
+        info.append(psutil.virtual_memory().percent)
+        info.append(psutil.cpu_percent())
+        return info
+    except Exception as e:
+        logging.exception(e)
 
 start_timer = time.time()
 
@@ -86,7 +107,9 @@ def clientCommandWorker(command):
 
         return password_holder
 
-
+    if command[0] == "Status" or command[0] == "status" or command[0] == "stat" or command[0] == "s" or command[0] == "S":
+        info_status = getSystemInfo()
+        return info_status
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
