@@ -98,8 +98,12 @@ def commandWorker():
                             pass
 
                     if not erreur_syntax :
-                        result = server.recv(99999999)
-                        password_holder = pickle.loads(result)
+                        try:
+                            result = server.recv(99999999)
+                            password_holder = pickle.loads(result)
+
+                        except KeyboardInterrupt:
+                            continue
 
                         validchoice = False
 
@@ -153,38 +157,47 @@ def commandWorker():
 
 
             elif args[0] == "Info" or args[0] == "info" or args[0] == "i" or args[0] == "stat" or args[0] == "s" or args[0] == "I" or args[0] == "S":
-                if len(args) == 1:
-                    crash = connexionStatus(server_status)
+                try:
+                    if len(args) == 1:
+                        crash = connexionStatus(server_status)
 
-                    if crash == True:
-                        print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+                        if crash == True:
+                            print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
 
-                    elif crash == False:
-                        print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC+ bcolors.OKBLUE + random_IP + bcolors.ENDC)
+                        elif crash == False:
+                            print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC+ bcolors.OKBLUE + random_IP + bcolors.ENDC)
 
-                if len(args) == 2:
-                    crash = connexionStatus(server_status)
-                    if crash == False:
+                    if len(args) == 2:
+                        crash = connexionStatus(server_status)
+                        if crash == False:
 
-                        if args[1] == "-a":
-                            print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC + bcolors.OKBLUE + random_IP + bcolors.ENDC)
-                            server.send(pickle.dumps([args[0]]))
-                            sys_info = server.recv(99999999)
-                            sys_info = pickle.loads(sys_info)
-                            print(bcolors.WARNING + "Platform : {}".format(sys_info[0]) + bcolors.ENDC)
-                            print(bcolors.WARNING + "Platform-Release : {}".format(sys_info[1]) + bcolors.ENDC)
-                            print(bcolors.WARNING + "Platform-Version : {}".format(sys_info[2]) + bcolors.ENDC)
-                            print(bcolors.FAIL + "Architecture : {}".format(sys_info[3]) + bcolors.ENDC)
-                            print(bcolors.OKBLUE + "Hostname : {}".format(sys_info[4]) + bcolors.ENDC)
-                            print(bcolors.OKBLUE + "Ip Address : {}".format(sys_info[5]) + bcolors.ENDC)
-                            print(bcolors.FAIL + "Processor : {}".format(sys_info[6]) + bcolors.ENDC)
-                            print(bcolors.FAIL + "CPU Cores : {}".format(sys_info[7]) + bcolors.ENDC)
-                            print(bcolors.OKGREEN + "Ram : {}".format(sys_info[8]) + bcolors.ENDC)
-                            print(bcolors.OKGREEN + "Ram Usage : {}%".format(sys_info[9]) + bcolors.ENDC)
-                            print(bcolors.FAIL + "CPU Usage : {}%".format(sys_info[10]) + bcolors.ENDC)
+                            if args[1].rstrip() == "-a":
+                                print(bcolors.OKGREEN + "Connecté au serveur : " + bcolors.ENDC + bcolors.OKBLUE + random_IP + bcolors.ENDC)
+                                server.send(pickle.dumps([args[0]]))
+                                sys_info = server.recv(99999999)
+                                sys_info = pickle.loads(sys_info)
+                                print(bcolors.WARNING + "Platform : {}".format(sys_info[0]) + bcolors.ENDC)
+                                print(bcolors.WARNING + "Platform-Release : {}".format(sys_info[1]) + bcolors.ENDC)
+                                print(bcolors.WARNING + "Platform-Version : {}".format(sys_info[2]) + bcolors.ENDC)
+                                print(bcolors.FAIL + "Architecture : {}".format(sys_info[3]) + bcolors.ENDC)
+                                print(bcolors.OKBLUE + "Hostname : {}".format(sys_info[4]) + bcolors.ENDC)
+                                print(bcolors.OKBLUE + "Ip Address : {}".format(sys_info[5]) + bcolors.ENDC)
+                                print(bcolors.FAIL + "Processor : {}".format(sys_info[6]) + bcolors.ENDC)
+                                print(bcolors.FAIL + "CPU Cores : {}".format(sys_info[7]) + bcolors.ENDC)
+                                print(bcolors.OKGREEN + "Ram : {}".format(sys_info[8]) + bcolors.ENDC)
+                                print(bcolors.OKGREEN + "Ram Usage : {}%".format(sys_info[9]) + bcolors.ENDC)
+                                print(bcolors.FAIL + "CPU Usage : {}%".format(sys_info[10]) + bcolors.ENDC)
+                                start_ms = time.time()
+                                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                                s.connect((random_IP, PORT))
+                                s.close()
+                                print(bcolors.OKBLUE + "Latence : {} ms".format(round(time.time() - start_ms, 2)) + bcolors.ENDC)
 
-                    elif crash == True:
-                        print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+                        elif crash == True:
+                            print(bcolors.FAIL + "Déconnecté !" + bcolors.ENDC)
+
+                except KeyboardInterrupt:
+                    pass
 
             elif args[0] == "Serveur" or args[0] == "SERVEUR" or args[0] == "serveur" or args[0] == "serv":
                 serveur_up = []
@@ -358,6 +371,47 @@ def commandWorker():
 
                     except getpass.GetPassWarning:
                         pass
+
+            elif args[0] == "Hash" or args[0] == "hash":
+
+                crashed = connexionStatus(server_status)
+                erreur_syntax = False
+                if crashed == False:
+                    if len(args) == 1:
+                        print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
+                        erreur_syntax = True
+
+                    elif len(args) == 2:
+                        erreur_syntax = False
+                        hash = [args[0],"Default" ,args[1]]
+                        hash = pickle.dumps(hash)
+                        server.send(hash)
+
+                    elif len(args) == 3:
+                        erreur_syntax = False
+                        hash = [args[0], args[1], args[2]]
+                        hash = pickle.dumps(hash)
+                        server.send(hash)
+                    else:
+
+                        print(bcolors.WARNING + "Utilisation : Hash <HashType> <hash>" + bcolors.ENDC)
+                        erreur_syntax = True
+
+                    if not erreur_syntax:
+                        try:
+                            hash = server.recv(99999999)
+                            hash = pickle.loads(hash)
+                            print(hash)
+
+                        except KeyboardInterrupt:
+
+                            pass
+
+
+                else:
+                    print(bcolors.FAIL + "Vous n'etes connecté à aucun serveur !" + bcolors.ENDC)
+
+
 
     except AttributeError:
         os._exit(0)

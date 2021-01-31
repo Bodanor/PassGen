@@ -1,18 +1,19 @@
 import socket
-import threading
 import pickle
 import random
 import time
 import multiprocessing
-
-import platform,psutil,logging
+import hashlib
+import threading
+import platform
+import psutil
+import logging
 
 
 def SystemInfoUpdated():
     while True:
         global info_status
         info_status = getSystemInfo()
-        time.sleep(0.01)
 
 def getSystemInfo():
     try:
@@ -27,7 +28,7 @@ def getSystemInfo():
         info.append(multiprocessing.cpu_count())
         info.append(str(round(psutil.virtual_memory().total / (1024.0 **3)))+" GB")
         info.append(psutil.virtual_memory().percent)
-        info.append(psutil.cpu_percent())
+        info.append(psutil.cpu_percent(interval=1))
         return info
     except Exception as e:
         logging.exception(e)
@@ -118,10 +119,41 @@ def clientCommandWorker(command):
 
         return password_holder
 
-    if command[0] == "Info" or command[0] == "info" or command[0] == "i" or command[0] == "stat" or command[0] == "s" or command[0] == "I" or command[0] == "S":
+    elif command[0] == "Info" or command[0] == "info" or command[0] == "i" or command[0] == "stat" or command[0] == "s" or command[0] == "I" or command[0] == "S":
         global info_status
-
         return info_status
+
+    elif command[0] == "Hash" or command[0] == "hash":
+        if command[1] == "Default":
+            hashed = hash(command[2])
+            return hashed
+
+        elif command[1] == "md5" or command[1] == "MD5":
+            hashed = hashlib.md5(bytes(command[2], "UTF8")).hexdigest()
+            print(hashed)
+            return hashed
+
+        elif command[1] == "sha1" or command[1] == "SHA1" or command[1] == "sha-1" or command[1] == "SHA-1":
+            hashed = hashlib.sha1(bytes(command[2], "UTF8")).hexdigest()
+            return hashed
+
+        elif command[1] == "sha224" or command[1] == "SHA224" or command[1] == "sha-224" or command[1] == "SHA-224":
+            hashed = hashlib.sha224(bytes(command[2], "UTF8")).hexdigest()
+            return hashed
+
+        elif command[1] == "sha256" or command[1] == "SHA256" or command[1] == "sha-256" or command[1] == "SHA-256":
+            hashed = hashlib.sha256(bytes(command[2], "UTF8")).hexdigest()
+            return hashed
+
+        elif command[1] == "sha384" or command[1] == "SHA384" or command[1] == "sha-384" or command[1] == "SHA-384":
+            hashed = hashlib.sha384(bytes(command[2], "UTF8")).hexdigest()
+            return hashed
+
+        elif command[1] == "sha512" or command[1] == "SHA512" or command[1] == "sha-512" or command[1] == "SHA-512":
+            hashed = hashlib.sha512(bytes(command[2], "UTF8")).hexdigest()
+            return hashed
+
+
 
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
