@@ -15,6 +15,7 @@ PORT = 7654
 
 BUFFERSIZE = 100
 
+
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
@@ -42,11 +43,25 @@ def passwordEncoder(password_holder):
 
     return encoded_password_holder
 
+def check_linux():
 
+    platform = os.name
+    if platform == "posix" or platform == "Linux" or platform == "Darwin":
+        return True
+    else:
+        return False
 
 def commandInput():
-    command = input(bcolors.OKGREEN+ "passGen >> " + bcolors.ENDC)
-    return command
+    global is_linux
+
+    if is_linux == True:
+        command = input(bcolors.OKGREEN+ "passGen >> " + bcolors.ENDC)
+        return command
+
+    else:
+        command = input("passGen >> ")
+        return command
+
 
 
 def commandWorker():
@@ -495,6 +510,7 @@ def connexionHolder():
 
 
 
+is_linux = check_linux()
 connexion_thread = threading.Thread(target=connexionHolder)
 connexion_thread.start()
 commandWorker()
