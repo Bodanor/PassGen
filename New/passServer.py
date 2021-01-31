@@ -7,6 +7,13 @@ import multiprocessing
 
 import platform,psutil,logging
 
+
+def SystemInfoUpdated():
+    while True:
+        global info_status
+        info_status = getSystemInfo()
+        time.sleep(0.01)
+
 def getSystemInfo():
     try:
         info=[]
@@ -24,6 +31,10 @@ def getSystemInfo():
         return info
     except Exception as e:
         logging.exception(e)
+
+
+sys_info_thread = threading.Thread(target=SystemInfoUpdated)
+sys_info_thread.start()
 
 start_timer = time.time()
 
@@ -108,7 +119,8 @@ def clientCommandWorker(command):
         return password_holder
 
     if command[0] == "Status" or command[0] == "status" or command[0] == "stat" or command[0] == "s" or command[0] == "S":
-        info_status = getSystemInfo()
+        global info_status
+
         return info_status
 
 
