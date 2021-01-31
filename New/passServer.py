@@ -118,7 +118,7 @@ def clientCommandWorker(command):
 
         return password_holder
 
-    if command[0] == "Status" or command[0] == "status" or command[0] == "stat" or command[0] == "s" or command[0] == "S":
+    if command[0] == "Info" or command[0] == "info" or command[0] == "i" or command[0] == "stat" or command[0] == "s" or command[0] == "I" or command[0] == "S":
         global info_status
 
         return info_status

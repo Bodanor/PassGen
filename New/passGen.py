@@ -152,7 +152,7 @@ def commandWorker():
 
 
 
-            elif args[0] == "Status" or args[0] == "status" or args[0] == "stat" or args[0] == "s" or args[0] == "S":
+            elif args[0] == "Info" or args[0] == "info" or args[0] == "i" or args[0] == "stat" or args[0] == "s" or args[0] == "I" or args[0] == "S":
                 if len(args) == 1:
                     crash = connexionStatus(server_status)
 
@@ -243,7 +243,7 @@ def commandWorker():
                 print(bcolors.WARNING)
                 print("Liste de commande disponible : ")
                 print("\t Gen : Génerer des mot de passe. Utilisation : Gen <Nombre de mot de passe> <Longueur du mot de passe>.")
-                print("\t Status : Afficher le status de connexion. Utilisation : -a Pour plus d'inforamtions sur le serveur.")
+                print("\t Info ou stat : Afficher le status de connexion. Utilisation : -a Pour plus d'inforamtions sur le serveur.")
                 print("\t Serveur : Afficher les serveurs disponibles. Utilisation : -a pour afficher tout les serveurs.")
                 print("\t Changer : Changer de serveur.")
                 print("\t Remote : Controler un serveur à distance par ssh.")
