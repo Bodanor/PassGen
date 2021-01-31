@@ -27,6 +27,10 @@ def client_handler(connexion, addr):
 
     except pickle.UnpicklingError:
         connexion.close()
+        print("[{}] Deconnexion de {}!".format(round(time.time() - start_timer, 4), addr[0]))
+    except ValueError:
+        connexion.close()
+        print("[{}] Deconnexion de {}!".format(round(time.time() - start_timer, 4), addr[0]))
 
 
 def clientCommandWorker(command):
